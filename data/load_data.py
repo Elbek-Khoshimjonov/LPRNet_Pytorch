@@ -4,6 +4,9 @@ import numpy as np
 import random
 import cv2
 import os
+import re
+
+plate_regex = re.compile('\d\d[A-Z\d]\d\d[A-Z\d][A-Z][A-Z]')
 
 CHARS = [
          '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
@@ -42,17 +45,17 @@ class LPRDataLoader(Dataset):
         basename = os.path.basename(filename)
         imgname, suffix = os.path.splitext(basename)
         imgname = imgname.split("-")[0].split("_")[0]
+        
+        if self.check(imgname) == False:
+            print(imgname)
+            assert 0, "Error label ^~^!!!"
+
         label = list()
         for c in imgname:
             # one_hot_base = np.zeros(len(CHARS))
             # one_hot_base[CHARS_DICT[c]] = 1
             label.append(CHARS_DICT[c])
-
-        if len(label) == 8:
-            if self.check(label) == False:
-                print(imgname)
-                assert 0, "Error label ^~^!!!"
-
+            
         return Image, label, len(label)
 
     def transform(self, img):
@@ -64,9 +67,4 @@ class LPRDataLoader(Dataset):
         return img
 
     def check(self, label):
-        if label[2] != CHARS_DICT['D'] and label[2] != CHARS_DICT['F'] \
-                and label[-1] != CHARS_DICT['D'] and label[-1] != CHARS_DICT['F']:
-            print("Error label, Please check!")
-            return False
-        else:
-            return True
+        return plate_regex.match(label)
