@@ -9,7 +9,7 @@ def augment_brightness_camera_images(image):
     image1 = cv2.cvtColor(image1,cv2.COLOR_HSV2RGB)
     return image1
 
-def transform_image(img, ang_range=2, shear_range=2, trans_range=2,brightness=1):
+def transform_image(img, ang_range=2, shear_range=2, trans_range=2,brightness=0):
     '''
     This function transforms images to generate new images.
     The function takes in following arguments,
