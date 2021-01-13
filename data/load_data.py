@@ -1,4 +1,5 @@
 from torch.utils.data import *
+from data.image_augment import transform_image as augment_func
 from imutils import paths
 import numpy as np
 import random
@@ -18,7 +19,7 @@ CHARS = [
 CHARS_DICT = {char:i for i, char in enumerate(CHARS)}
 
 class LPRDataLoader(Dataset):
-    def __init__(self, img_dir, imgSize, lpr_max_len, PreprocFun=None):
+    def __init__(self, img_dir, imgSize, lpr_max_len, augment=False, PreprocFun=None):
         self.img_dir = img_dir
         self.img_paths = []
         for i in range(len(img_dir)):
@@ -26,6 +27,7 @@ class LPRDataLoader(Dataset):
         random.shuffle(self.img_paths)
         self.img_size = imgSize
         self.lpr_max_len = lpr_max_len
+        self.augment = augment
         if PreprocFun is not None:
             self.PreprocFun = PreprocFun
         else:
@@ -40,6 +42,10 @@ class LPRDataLoader(Dataset):
         height, width, _ = Image.shape
         if height != self.img_size[1] or width != self.img_size[0]:
             Image = cv2.resize(Image, self.img_size)
+        # Augment
+        if self.augment:
+            Image = augment_func(Image)
+
         Image = self.PreprocFun(Image)
 
         basename = os.path.basename(filename)
