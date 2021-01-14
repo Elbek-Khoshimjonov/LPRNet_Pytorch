@@ -30,6 +30,47 @@ def get_parser():
 
     return args
 
+# Run pre-processing, model and decode
+def run(net, args, img):
+    # Pre-process
+    img = pre_process(img, args.img_size)
+    img = torch.tensor(img)
+    img = img.unsqueeze(0)
+
+    img = Variable( img.cuda() if args.cuda else img)
+    # Run model
+    output = net(img).cpu().detach().numpy()
+    
+    return decode(output)
+
+# Greedy decode
+def decode(prebs):
+
+    # output labels
+    labels = []
+
+    for i in range(prebs.shape[0]):
+        preb = prebs[i, :, :]
+        preb_label = []
+        for j in range(preb.shape[1]):
+            preb_label.append(np.argmax(preb[:, j], axis=0))
+        no_repeat_blank_label = []
+        pre_c = preb_label[0]
+        if pre_c != len(CHARS) - 1:
+            no_repeat_blank_label.append(pre_c)
+        for c in preb_label: # droput repeat label and blak label
+            if(pre_c == c) or ( c == len(CHARS) - 1):
+                if c == len(CHARS) - 1:
+                    pre_c = c
+                continue
+            no_repeat_blank_label.append(c)
+            pre_c = c
+        label = "".join(map(lambda i: CHARS[i], no_repeat_blank_label))
+        labels.append(label)
+
+    return labels
+ 
+
 def inference():
     args = get_parser()
 
@@ -46,15 +87,8 @@ def inference():
         print("[Error] Can't found pretrained mode, please check!")
         return False
 
-    img = cv2.imread(args.test_img_dirs)
-    img = pre_process(img, args.img_size)
-    img = torch.unsqueeze(torch.tensor(img))
-
-    img = Variable( img.cuda() if args.cuda else img)
-
-    output = lprnet(img)
-    print(output.cpu().detach()[0])
-
-
+    img = cv2.imread(args.test_img)
+    print(run(lprnet, args, img)[0])
+    
 if __name__=="__main__":
     inference()
