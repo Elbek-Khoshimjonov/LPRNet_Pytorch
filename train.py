@@ -53,7 +53,7 @@ def get_parser():
     parser.add_argument('--train_img_dirs', default="dataset/train", help='the train images path')
     parser.add_argument('--test_img_dirs', default="dataset/val", help='the test images path')
     parser.add_argument('--dropout_rate', default=0.5, help='dropout rate.')
-    parser.add_argument('--learning_rate', default=0.001, help='base value of learning rate.')
+    parser.add_argument('--learning_rate', default=0.0001, help='base value of learning rate.')
     parser.add_argument('--lpr_max_len', default=8, help='license plate number max length.')
     parser.add_argument('--train_batch_size', default=64, help='training batch size.')
     parser.add_argument('--test_batch_size', default=64, help='testing batch size.')
@@ -137,7 +137,7 @@ def train():
 
     epoch_size = len(train_dataset) // args.train_batch_size
     max_iter = args.max_epoch * epoch_size
-
+    args.test_interval = epoch_size
     ctc_loss = nn.CTCLoss(blank=len(CHARS)-1, reduction='mean') # reduction: 'none' | 'mean' | 'sum'
 
     if args.resume_epoch > 0:

@@ -34,7 +34,8 @@ def get_parser():
     parser.add_argument('--cuda', default=True, type=bool, help='Use cuda to train model')
     parser.add_argument('--show', default=False, type=bool, help='show test image and its predict result or not.')
     parser.add_argument('--pretrained_model', default='./weights/v1/Final_LPRNet_model.pth', help='pretrained base model')
-
+    
+    parser.add_argument("--augment", action='store_true', default=False, help='Augment image')
     args = parser.parse_args()
 
     return args
@@ -69,7 +70,7 @@ def test():
         return False
 
     test_img_dirs = os.path.expanduser(args.test_img_dirs)
-    test_dataset = LPRDataLoader(test_img_dirs.split(','), args.img_size, args.lpr_max_len)
+    test_dataset = LPRDataLoader(test_img_dirs.split(','), args.img_size, args.lpr_max_len, args.augment)
     try:
         Greedy_Decode_Eval(lprnet, test_dataset, args)
     finally:
