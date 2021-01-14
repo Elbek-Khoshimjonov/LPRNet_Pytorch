@@ -2,14 +2,18 @@ import numpy as np
 import cv2
 
 def augment_brightness_camera_images(image):
-    image1 = cv2.cvtColor(image,cv2.COLOR_RGB2HSV)
-    random_bright = .35+np.random.uniform()
+    image1 = cv2.cvtColor(image,cv2.COLOR_BGR2HSV)
+    random_bright = np.int(np.random.uniform(low=-100, high=100))
     #print(random_bright)
-    image1[:,:,2] = image1[:,:,2]*random_bright
-    image1 = cv2.cvtColor(image1,cv2.COLOR_HSV2RGB)
+    brightness = image[:, :, 2].astype(np.int)
+    brightness += random_bright
+    brightness = np.where(brightness > 255, 255, brightness)
+    brightness = np.where(brightness < 0, 0, brightness)
+    image1[:,:,2] = brightness.astype(np.uint8)
+    image1 = cv2.cvtColor(image1,cv2.COLOR_HSV2BGR)
     return image1
 
-def transform_image(img, ang_range=2, shear_range=2, trans_range=2,brightness=0):
+def transform_image(img, ang_range=5, shear_range=5, trans_range=5,brightness=1):
     '''
     This function transforms images to generate new images.
     The function takes in following arguments,
