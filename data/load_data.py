@@ -74,3 +74,13 @@ class LPRDataLoader(Dataset):
 
     def check(self, label):
         return plate_regex.match(label)
+
+
+def pre_process(img, img_size):
+    img = cv2.resize(img, img_size)
+    img = img.astype('float32')
+    img -= 127.5
+    img *= 0.0078125
+    img = np.transpose(img, (2, 0, 1))
+
+    return img
