@@ -142,3 +142,6 @@ weights/
 
 # Dataset
 dataset
+
+# Test images
+test_images/

@@ -3,7 +3,7 @@ import cv2
 
 def augment_brightness_camera_images(image):
     image1 = cv2.cvtColor(image,cv2.COLOR_BGR2HSV)
-    random_bright = np.int(np.random.uniform(low=-100, high=100))
+    random_bright = np.int(np.random.uniform(low=-20, high=20))
     #print(random_bright)
     brightness = image[:, :, 2].astype(np.int)
     brightness += random_bright
@@ -13,7 +13,7 @@ def augment_brightness_camera_images(image):
     image1 = cv2.cvtColor(image1,cv2.COLOR_HSV2BGR)
     return image1
 
-def transform_image(img, ang_range=5, shear_range=5, trans_range=5,brightness=1):
+def transform_image(img, ang_range=3, shear_range=3, trans_range=3,brightness=1):
     '''
     This function transforms images to generate new images.
     The function takes in following arguments,
