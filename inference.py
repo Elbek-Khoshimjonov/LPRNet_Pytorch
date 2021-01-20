@@ -16,7 +16,7 @@ import os
 
 def get_parser():
     parser = argparse.ArgumentParser(description='parameters to train net')
-    parser.add_argument('--img_size', default=(141, 36), help='the image size')
+    parser.add_argument('--img_size', default=(94, 24), help='the image size')
     parser.add_argument('--test_img', type=str, required=True,  help='test image path')
     parser.add_argument('--dropout_rate', default=0, help='dropout rate.')
     parser.add_argument('--lpr_max_len', default=8, help='license plate number max length.')
@@ -24,7 +24,7 @@ def get_parser():
     parser.add_argument('--phase_train', default=False, type=bool, help='train or test phase flag.')
     parser.add_argument('--num_workers', default=8, type=int, help='Number of workers used in dataloading')
     parser.add_argument('--cuda', default=True, type=bool, help='Use cuda to train model')
-    parser.add_argument('--pretrained_model', default='./weights/v1/Final_LPRNet_model.pth', help='pretrained base model')
+    parser.add_argument('--pretrained_model', default='./weights/v3/Final_LPRNet_model.pth', help='pretrained base model')
 
     args = parser.parse_args()
 
@@ -54,18 +54,9 @@ def decode(prebs):
         preb_label = []
         for j in range(preb.shape[1]):
             preb_label.append(np.argmax(preb[:, j], axis=0))
-        no_repeat_blank_label = []
-        pre_c = preb_label[0]
-        if pre_c != len(CHARS) - 1:
-            no_repeat_blank_label.append(pre_c)
-        for c in preb_label: # droput repeat label and blak label
-            if(pre_c == c) or ( c == len(CHARS) - 1):
-                if c == len(CHARS) - 1:
-                    pre_c = c
-                continue
-            no_repeat_blank_label.append(c)
-            pre_c = c
-        label = "".join(map(lambda i: CHARS[i], no_repeat_blank_label))
+        # Remove empty
+        preb_label = [i for i in preb_label if i!=len(CHARS)-1]  
+        label = "".join(map(lambda i: CHARS[i], preb_label))
         labels.append(label)
 
     return labels
