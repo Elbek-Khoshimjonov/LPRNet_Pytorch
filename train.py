@@ -48,7 +48,11 @@ def adjust_learning_rate(optimizer, cur_epoch, base_lr, lr_schedule):
 
 def get_parser():
     parser = argparse.ArgumentParser(description='parameters to train net')
+<<<<<<< HEAD
     parser.add_argument('--max_epoch', default=100, help='epoch to train the network')
+=======
+    parser.add_argument('--max_epoch', default=15, help='epoch to train the network')
+>>>>>>> affb228a4b44d446a6d3e25f42ae8de0e50867f1
     parser.add_argument('--img_size', default=(94, 24), help='the image size')
     parser.add_argument('--train_img_dirs', default="dataset/train", help='the train images path')
     parser.add_argument('--test_img_dirs', default="dataset/val", help='the test images path')
