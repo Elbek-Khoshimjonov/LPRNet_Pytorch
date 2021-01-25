@@ -4,7 +4,6 @@ from model.LPRNet import build_lprnet
 # import torch.backends.cudnn as cudnn
 from torch.autograd import Variable
 import torch.nn.functional as F
-from torch.utils.data import *
 from torch import optim
 import torch.nn as nn
 import numpy as np

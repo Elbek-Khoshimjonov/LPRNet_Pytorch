@@ -1,4 +1,4 @@
-from torch.utils.data import *
+from torch.utils.data import Dataset
 from data.image_augment import transform_image as augment_func
 from imutils import paths
 import numpy as np
