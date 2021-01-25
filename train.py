@@ -239,9 +239,18 @@ def Greedy_Decode_Eval(Net, datasets, args):
             preb_label = list()
             for j in range(preb.shape[1]):
                 preb_label.append(np.argmax(preb[:, j], axis=0))
-            # Remove empty
-            preb_label = [i for i in preb_label if i!=len(CHARS)-1]
-            preb_labels.append(preb_label)
+            no_repeat_blank_label = list()
+            pre_c = preb_label[0]
+            if pre_c != len(CHARS) - 1:
+                no_repeat_blank_label.append(pre_c)
+            for c in preb_label: # dropout repeate label and blank label
+                if (pre_c == c) or (c == len(CHARS) - 1):
+                    if c == len(CHARS) - 1:
+                        pre_c = c
+                    continue
+                no_repeat_blank_label.append(c)
+                pre_c = c
+            preb_labels.append(no_repeat_blank_label)
         
         for i, label in enumerate(preb_labels):
             if len(label) != len(targets[i]):
