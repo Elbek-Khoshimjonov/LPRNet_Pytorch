@@ -11,7 +11,7 @@ from model.LPRNet import build_lprnet
 # import torch.backends.cudnn as cudnn
 from torch.autograd import Variable
 import torch.nn.functional as F
-from torch.utils.data import *
+from torch.utils.data import DataLoader
 from torch import optim
 import torch.nn as nn
 import numpy as np
@@ -53,9 +53,9 @@ def get_parser():
     parser.add_argument('--train_img_dirs', default="dataset/train", help='the train images path')
     parser.add_argument('--test_img_dirs', default="dataset/val", help='the test images path')
     parser.add_argument('--dropout_rate', default=0.5, help='dropout rate.')
-    parser.add_argument('--learning_rate', default=0.00008, help='base value of learning rate.')
-    parser.add_argument('--lpr_max_len', default=8, help='license plate number max length.')
-    parser.add_argument('--train_batch_size', default=32, help='training batch size.')
+    parser.add_argument('--learning_rate', default=0.001, help='base value of learning rate.')
+    parser.add_argument('--lpr_max_len', default=9, help='license plate number max length.')
+    parser.add_argument('--train_batch_size', default=64, help='training batch size.')
     parser.add_argument('--test_batch_size', default=64, help='testing batch size.')
     parser.add_argument('--phase_train', default=True, type=bool, help='train or test phase flag.')
     parser.add_argument('--num_workers', default=8, type=int, help='Number of workers used in dataloading')
@@ -66,7 +66,7 @@ def get_parser():
     parser.add_argument('--momentum', default=0.9, type=float, help='momentum')
     parser.add_argument('--weight_decay', default=2e-5, type=float, help='Weight decay for SGD')
     parser.add_argument('--lr_schedule', default=[4, 8, 12, 14, 16, 32, 64], help='schedule for learning rate.')
-    parser.add_argument('--save_folder', default='./weights/v3/', help='Location to save checkpoint models')
+    parser.add_argument('--save_folder', default='./weights/v4/', help='Location to save checkpoint models')
     # parser.add_argument('--pretrained_model', default='./weights/Final_LPRNet_model.pth', help='pretrained base model')
     parser.add_argument('--pretrained_model', default='', help='pretrained base model')
     
