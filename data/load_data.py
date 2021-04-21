@@ -20,7 +20,7 @@ CHARS = [
 CHARS_DICT = {char:i for i, char in enumerate(CHARS)}
 
 class LPRDataLoader(Dataset):
-    def __init__(self, img_dir, imgSize, lpr_max_len, PreProcfun=None):
+    def __init__(self, img_dir, imgSize, lpr_max_len, PreprocFun=None):
         self.img_dir = img_dir
         self.img_paths = []
         for i in range(len(img_dir)):
@@ -32,9 +32,8 @@ class LPRDataLoader(Dataset):
             self.PreprocFun = PreprocFun
         else:
             self.PreprocFun = transforms.Compose([
-                transforms.Resize(imgSize[1]+5),
-                transforms.RandomCrop(imgSize),
-                transforms.RandomRotation((-5, 5)),
+                transforms.Resize(imgSize),
+                transforms.RandomRotation(5),
                 transforms.ToTensor()
             ])
 
@@ -44,6 +43,10 @@ class LPRDataLoader(Dataset):
     def __getitem__(self, index):
         filename = self.img_paths[index]
         img = Image.open(filename)
+        # Grayscale to RGB
+        rgbimg = Image.new("RGB", img.size)
+        rgbimg.paste(img)
+        img  = rgbimg
         img = self.PreprocFun(img)
 
         basename = os.path.basename(filename)

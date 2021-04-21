@@ -48,8 +48,8 @@ def adjust_learning_rate(optimizer, cur_epoch, base_lr, lr_schedule):
 
 def get_parser():
     parser = argparse.ArgumentParser(description='parameters to train net')
-    parser.add_argument('--max_epoch', default=100, help='epoch to train the network')
-    parser.add_argument('--img_size', default=(94, 24), help='the image size')
+    parser.add_argument('--max_epoch', default=20, help='epoch to train the network')
+    parser.add_argument('--img_size', default=(24, 94), help='the image size')
     parser.add_argument('--train_img_dirs', default="dataset/train", help='the train images path')
     parser.add_argument('--test_img_dirs', default="dataset/val", help='the test images path')
     parser.add_argument('--dropout_rate', default=0.5, help='dropout rate.')
@@ -61,12 +61,12 @@ def get_parser():
     parser.add_argument('--num_workers', default=8, type=int, help='Number of workers used in dataloading')
     parser.add_argument('--cuda', default=True, type=bool, help='Use cuda to train model')
     parser.add_argument('--resume_epoch', default=0, type=int, help='resume iter for retraining')
-    parser.add_argument('--save_interval', default=2000, type=int, help='interval for save model state dict')
-    parser.add_argument('--test_interval', default=2000, type=int, help='interval for evaluate')
+    parser.add_argument('--save_interval', default=200000, type=int, help='interval for save model state dict')
+    parser.add_argument('--test_interval', default=200000, type=int, help='interval for evaluate')
     parser.add_argument('--momentum', default=0.9, type=float, help='momentum')
     parser.add_argument('--weight_decay', default=2e-5, type=float, help='Weight decay for SGD')
-    parser.add_argument('--lr_schedule', default=[4, 8, 12, 14, 16, 32, 64], help='schedule for learning rate.')
-    parser.add_argument('--save_folder', default='./weights/v4/', help='Location to save checkpoint models')
+    parser.add_argument('--lr_schedule', default=[4, 8, 12, 14, 16], help='schedule for learning rate.')
+    parser.add_argument('--save_folder', default='./weights/v1/', help='Location to save checkpoint models')
     # parser.add_argument('--pretrained_model', default='./weights/Final_LPRNet_model.pth', help='pretrained base model')
     parser.add_argument('--pretrained_model', default='', help='pretrained base model')
     args = parser.parse_args()
@@ -79,7 +79,7 @@ def collate_fn(batch):
     lengths = []
     for _, sample in enumerate(batch):
         img, label, length = sample
-        imgs.append(torch.from_numpy(img))
+        imgs.append(img)
         labels.extend(label)
         lengths.append(length)
     labels = np.asarray(labels).flatten().astype(np.int)
