@@ -34,7 +34,8 @@ class LPRDataLoader(Dataset):
             self.PreprocFun = transforms.Compose([
                 transforms.Resize(imgSize),
                 transforms.RandomRotation(5),
-                transforms.ToTensor()
+                transforms.ToTensor(),
+                transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
             ])
 
     def __len__(self):
