@@ -21,10 +21,11 @@ import torch
 import time
 import cv2
 import os
+from tqdm import tqdm
 
 def get_parser():
     parser = argparse.ArgumentParser(description='parameters to train net')
-    parser.add_argument('--img_size', default=(94, 24), help='the image size')
+    parser.add_argument('--img_size', default=(24, 94), help='the image size')
     parser.add_argument('--test_img_dirs', default="./dataset/test", help='the test images path')
     parser.add_argument('--dropout_rate', default=0, help='dropout rate.')
     parser.add_argument('--lpr_max_len', default=8, help='license plate number max length.')
@@ -33,7 +34,7 @@ def get_parser():
     parser.add_argument('--num_workers', default=8, type=int, help='Number of workers used in dataloading')
     parser.add_argument('--cuda', default=True, type=bool, help='Use cuda to train model')
     parser.add_argument('--show', default=False, type=bool, help='show test image and its predict result or not.')
-    parser.add_argument('--pretrained_model', default='./weights/v3/Final_LPRNet_model.pth', help='pretrained base model')
+    parser.add_argument('--pretrained_model', default='./weights/v1/Final_LPRNet_model.pth', help='pretrained base model')
     
     parser.add_argument("--augment", action='store_true', default=False, help='Augment image')
     args = parser.parse_args()
@@ -46,7 +47,7 @@ def collate_fn(batch):
     lengths = []
     for _, sample in enumerate(batch):
         img, label, length = sample
-        imgs.append(torch.from_numpy(img))
+        imgs.append(img)
         labels.extend(label)
         lengths.append(length)
     labels = np.asarray(labels).flatten().astype(np.float32)
@@ -70,7 +71,7 @@ def test():
         return False
 
     test_img_dirs = os.path.expanduser(args.test_img_dirs)
-    test_dataset = LPRDataLoader(test_img_dirs.split(','), args.img_size, args.lpr_max_len, args.augment)
+    test_dataset = LPRDataLoader(test_img_dirs.split(','), args.img_size, args.lpr_max_len, augment=False)
     try:
         Greedy_Decode_Eval(lprnet, test_dataset, args)
     finally:
@@ -85,7 +86,7 @@ def Greedy_Decode_Eval(Net, datasets, args):
     Tn_1 = 0
     Tn_2 = 0
     t1 = time.time()
-    for i in range(epoch_size):
+    for i in tqdm(range(epoch_size), desc='Testing'):
         # load train data
         images, labels, lengths = next(batch_iterator)
         start = 0

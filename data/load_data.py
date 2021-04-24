@@ -20,7 +20,7 @@ CHARS = [
 CHARS_DICT = {char:i for i, char in enumerate(CHARS)}
 
 class LPRDataLoader(Dataset):
-    def __init__(self, img_dir, imgSize, lpr_max_len, PreprocFun=None):
+    def __init__(self, img_dir, imgSize, lpr_max_len, augment=True):
         self.img_dir = img_dir
         self.img_paths = []
         for i in range(len(img_dir)):
@@ -28,13 +28,20 @@ class LPRDataLoader(Dataset):
         random.shuffle(self.img_paths)
         self.img_size = imgSize
         self.lpr_max_len = lpr_max_len
-        if PreprocFun is not None:
-            self.PreprocFun = PreprocFun
-        else:
+        if augment:
             self.PreprocFun = transforms.Compose([
                 transforms.Resize(imgSize),
                 transforms.RandomRotation(5),
-                transforms.ToTensor()
+                transforms.ToTensor(),
+                transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+            ])
+
+        else:
+            self.PreprocFun = transforms.Compose([
+                transforms.Resize(imgSize),
+                #transforms.RandomRotation(5),
+                transforms.ToTensor(),
+                transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
             ])
 
     def __len__(self):
